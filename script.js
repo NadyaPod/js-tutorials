@@ -89,44 +89,56 @@ const dispayMovements = function(movements) {
 }
 
 dispayMovements(account1.movements);
+
 const calcPrintBalance = (balanceData) => {
   const balance = balanceData.reduce((acc, data) => acc + data, 0);
-  labelBalance.textContent = `${balance} EUR`
+  labelBalance.textContent = `${balance}€`
 }
 
-console.log('accbalance', calcPrintBalance(account2.movements));
-
-const withDrawals = movements.filter(mov => mov < 0);
-console.log('withDrawals', withDrawals);
-
-const sum = movements.reduce((acc, mov) => acc + mov, 0)
-console.log('reduce sum', sum);
+calcPrintBalance(movements)
 
 const nameToAbbr = (accs) => 
   accs.forEach((acc) => {
     acc.userName = acc.owner.toLowerCase().split(' ').map(word => word[0]).join('')
   })
 
-nameToAbbr(accounts)
+const calcDisplaySummary = (accData, intRule) => {
+  const sumIn = accData
+  .filter((data) => data >= 0)
+  .reduce((acc, data) => acc + data, 0)
+  labelSumIn.textContent = `${sumIn}€`
 
- 
+  const sumOut = accData
+  .filter((data) => data < 0)
+  .reduce((acc, data) => acc + data, 0)
+  labelSumOut.textContent = `${sumOut}€`
+
+  const interest = movements
+  .filter((data) => data >= 0)
+  .map(data => data * intRule/100)
+  .filter(data => data >= 1)
+  .reduce((acc, data) => acc + data, 0)
+
+  labelSumInterest.textContent = `${interest}€`
+}
+
+calcDisplaySummary(movements, 1.2)
+
+
+const withDrawals = movements.filter(mov => mov < 0);
+const sum = movements.reduce((acc, mov) => acc + mov, 0)
+
 const eurToUsd = 1.1;
 const eurConverted = movements.map(move => move * eurToUsd);
-console.log(eurConverted);
 
 const eurConverted_1 = [];
 for (let move of movements) {
   eurConverted_1.push(move * eurToUsd)
 }
 
-console.log('eurCon_1', eurConverted_1);
-
 const maxValue = (arr) => {
   return arr.reduce((acc, value) => acc = acc >= value ? acc : value, arr[0])
 }
-
-console.log(maxValue(movements));
-
 
 ///////////////////////////////////////
 // Coding Challenge #1
