@@ -71,8 +71,6 @@ const currencies = new Map([
   ['GBP', 'Pound sterling'],
 ]);
 
-const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
-
 /////////////////////////////////////////////////
 const dispayMovements = function(movements) {
   containerMovements.innerHTML = ''
@@ -88,53 +86,73 @@ const dispayMovements = function(movements) {
   })
 }
 
-dispayMovements(account1.movements);
-
 const calcPrintBalance = (balanceData) => {
   const balance = balanceData.reduce((acc, data) => acc + data, 0);
   labelBalance.textContent = `${balance}€`
 }
-
-calcPrintBalance(movements)
 
 const nameToAbbr = (accs) => 
   accs.forEach((acc) => {
     acc.userName = acc.owner.toLowerCase().split(' ').map(word => word[0]).join('')
   })
 
-const calcDisplaySummary = (accData, intRule) => {
-  const sumIn = accData
+nameToAbbr(accounts)
+console.log(accounts);
+
+const calcDisplaySummary = (acc) => {
+  const sumIn = acc.movements
   .filter((data) => data >= 0)
   .reduce((acc, data) => acc + data, 0)
   labelSumIn.textContent = `${sumIn}€`
 
-  const sumOut = accData
+  const sumOut = acc.movements
   .filter((data) => data < 0)
   .reduce((acc, data) => acc + data, 0)
   labelSumOut.textContent = `${sumOut}€`
 
-  const interest = movements
+  const interest = acc.movements
   .filter((data) => data >= 0)
-  .map(data => data * intRule/100)
+  .map(data => data * acc.interestRate / 100)
   .filter(data => data >= 1)
   .reduce((acc, data) => acc + data, 0)
 
   labelSumInterest.textContent = `${interest}€`
 }
 
-calcDisplaySummary(movements, 1.2)
+// Login
+let currentAccount;
 
+btnLogin.addEventListener('click', (e) => {
+  e.preventDefault();
+  currentAccount = accounts.find(acc => acc.userName === inputLoginUsername.value)
 
-const withDrawals = movements.filter(mov => mov < 0);
-const sum = movements.reduce((acc, mov) => acc + mov, 0)
+  console.log(currentAccount);
 
-const eurToUsd = 1.1;
-const eurConverted = movements.map(move => move * eurToUsd);
+  if (currentAccount?.pin === +inputLoginPin.value) {
+    labelWelcome.textContent = `Welcome back, ${currentAccount.owner.split(' ')[0]}`
+    containerApp.style.opacity = 100;
 
-const eurConverted_1 = [];
-for (let move of movements) {
-  eurConverted_1.push(move * eurToUsd)
-}
+    inputLoginUsername.value = '';
+    inputLoginPin.value = '';
+    inputLoginPin.blur();
+
+    dispayMovements(currentAccount.movements);
+    calcDisplaySummary(currentAccount);
+    calcPrintBalance(currentAccount.movements);
+  }
+})
+
+// const withDrawals = movements.filter(mov => mov < 0);
+// const sum = movements.reduce((acc, mov) => acc + mov, 0)
+
+// const eurToUsd = 1.1;
+// const eurConverted = movements.map(move => move * eurToUsd);
+
+// const eurConverted_1 = [];
+
+// for (let move of movements) {
+//   eurConverted_1.push(move * eurToUsd)
+// }
 
 const maxValue = (arr) => {
   return arr.reduce((acc, value) => acc = acc >= value ? acc : value, arr[0])
@@ -170,11 +188,10 @@ const checkDogs = (dog1, dog2) => {
 
 checkDogs([3, 5, 2, 12, 7], [4, 1, 15, 8, 3])
 
-const calcAverageHumanAge = (ages) => {
-  const res = ages
+const calcAverageHumanAge = (ages) => 
+  ages
   .map(age => age <= 2 ? age * 2 : 16 + age * 4)
   .filter(age => age >= 18)
-  .reduce((acc, age, arr) => acc + (age / arr.length), 0)
-}
+  .reduce((acc, age, i, arr) => acc + age / arr.length, 0)
 
-calcAverageHumanAge([5, 2, 4, 1, 15, 8, 3])
+console.log(calcAverageHumanAge([5, 2, 4, 1, 15, 8, 3]));
