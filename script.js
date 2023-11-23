@@ -158,7 +158,23 @@ btnTransfer.addEventListener('click', (e) => {
 
     updateUI(currentAccount);
   } 
+})
 
+// Delete Account
+btnClose.addEventListener('click', (e) => {
+  e.preventDefault();
+
+  if (currentAccount.userName === inputCloseUsername.value && currentAccount.pin === +inputClosePin.value) {
+    const indToDelete = accounts.findIndex((acc) => acc.userName === inputCloseUsername.value
+    )
+    accounts.splice(indToDelete, 1)
+    containerApp.style.opacity = 0;
+    labelWelcome.textContent = 'Log in to get started'
+  }
+
+  inputCloseUsername.value = '';
+  inputClosePin.value = '';
+  inputClosePin.blur();
 })
 
 
