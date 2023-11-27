@@ -79,9 +79,12 @@ const nameToAbbr = (accs) =>
 
 nameToAbbr(accounts)
 
-const dispayMovements = function(movements) {
-  containerMovements.innerHTML = ''
-  movements.forEach((mov, i) => {
+const dispayMovements = function(movements, sort = false) {
+  containerMovements.innerHTML = '';
+
+  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+
+  movs.forEach((mov, i) => {
     const type = mov > 0 ? 'deposit' : 'withdrawal'
     const html = `
     <div class="movements__row">
@@ -92,6 +95,14 @@ const dispayMovements = function(movements) {
     containerMovements.insertAdjacentHTML('afterbegin', html)
   })
 }
+
+let isSorted = false
+
+btnSort.addEventListener('click', (e) => {
+  e.preventDefault();
+  isSorted = !isSorted;
+  dispayMovements(currentAccount.movements, isSorted)
+})
 
 const calcPrintBalance = (acc) => {
   acc.balance = acc.movements.reduce((mov, data) => mov + data, 0);
